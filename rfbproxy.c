@@ -950,7 +950,12 @@ static int do_standalone_authentication (int server, FILE *f,
 		if (do_read (server, challenge, sizeof(challenge)))
 			return 1;
 
-		passwd = getpass("Password: ");
+		char *passwd_tmp = getenv("VNCPASSWD");
+		if (passwd_tmp != NULL) {
+			passwd = strndup(passwd_tmp, 8);
+		} else {
+			passwd = getpass("Password: ");
+		}
 
 		if ((!passwd) || (strlen(passwd) == 0)) {
 			fprintf(stderr,"Reading password failed\n");
